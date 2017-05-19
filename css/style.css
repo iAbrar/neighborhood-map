@@ -29,7 +29,23 @@ Headers:		'Roboto', sans-serif;
 -------------------------------------------------------------------*/
 
 /* 1. Element Styling */
+ul{
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+li{
+    background-color: #073855;
+    border-bottom:1px #fff;
+    color: #fff;
+    font-size: 14px;
+    font-weight: bold;
+    min-height: 40px;
+    padding: 10px 9px 9px 9px;
+    width: 100%;
+    list-style: none;
 
+}
 @charset "CP852";
 a {
   -moz-transition: 0.2s;
