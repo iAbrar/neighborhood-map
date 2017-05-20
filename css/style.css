@@ -230,7 +230,9 @@ body, html {
   height: 100%;
   margin: 0;
 }
-
+i{
+  padding-right: 10px;
+}
 /* 7. Responsive */
 @media (max-width: 767px) {
 
