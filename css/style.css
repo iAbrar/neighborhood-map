@@ -18,8 +18,15 @@ body {
   color: #5a5a5a;
 font-family: 'Julius Sans One', sans-serif !important;
 }
+.container-fluid{
+  height: 100% !important;
+   overflow: hidden;
+}
 button, input{
 font-family: 'Julius Sans One', sans-serif !important;
+}
+button{
+   cursor:pointer;
 }
 ul{
   width: 100%;
@@ -38,6 +45,18 @@ li{
     list-style: none;
 
 }
+li:hover{
+   cursor:pointer;
+  background-color: #56296d;
+  pointer-events: 
+}
+.bg-faded {
+    background-color: #351844 !important; 
+   
+}
+.navbar-brand {
+    color: #ffeb3b !important; 
+}
 @charset "CP852";
 
 
@@ -54,7 +73,8 @@ h2 {
 
 #map {
   width: 100%;
-  min-height:900px;
+  height: 100%;
+   overflow: hidden;
 }
 
 .search-box-wrapper {
