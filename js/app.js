@@ -48,6 +48,7 @@ var Location = function(data){
 this.name = ko.observable(data.name);
 this.LatLng = ko.observable(data.LatLng);
 this.category = ko.observable(data.category);
+this.visible = ko.observable(true);
 
 }
             // add markers of locations on the map
@@ -79,6 +80,15 @@ this.category = ko.observable(data.category);
 // the viewModel
 var ViewModel= function () {
 var self =this;
+ this.filterSearch = ko.observable("");
+
+this.locationList = ko.observableArray([]);
+
+    initialLocation.forEach(function(locationItem){
+        self.locationList.push( new Location(locationItem) );
+    });
+
+
 //initialize map 
  var map;
        // Create a new blank array for all the listing markers.
@@ -93,7 +103,25 @@ var self =this;
                         lng: 46.685779094696045
                     },
                     zoom: 16
-                });            
+                });    
+	
+this.filteredList = ko.computed( function() {
+		var filter = self.filterSearch().toLowerCase();
+		if (!filter) {
+			self.locationList().forEach(function(locationItem){
+				locationItem.visible(true);
+			});
+			return self.locationList();
+		} else {
+			return ko.utils.arrayFilter(self.locationList(), function(locationItem) {
+				var string = locationItem.name.toLowerCase();
+				var result = (string.search(filter) >= 0);
+				locationItem.visible(result);
+				return result;
+			});
+		}
+	}, self);
+               
 
 
   function addMarkers(locations,map) {
@@ -118,7 +146,6 @@ var self =this;
           });
           bounds.extend(markers[i].position);
         }
-        console.log(locations.length);
 }
 
       // This function populates the infowindow when the marker is clicked. We'll only allow
@@ -137,9 +164,9 @@ var self =this;
         }
       }
 addMarkers(initialLocation,map);
-}
+};//end view
 
 function loadScript(){
-	ko.applyBindings(new ViewModel());
+	ko.applyBindings(new ViewModel);
 
 }
