@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 // Create marker for the location "Data Model"
 //**********************
@@ -138,7 +138,7 @@ var Location = function(data) {
     this.LatLng = ko.observable(data.LatLng);
     this.category = ko.observable(data.category);
 
-}
+};
 
 
 // the viewModel
