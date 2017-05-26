@@ -137,7 +137,7 @@ var googleMap = {
 var Location = function(data) {
     this.name = ko.observable(data.name);
     this.LatLng = ko.observable(data.LatLng);
-    this.category = ko.observable(data.category);
+    this.selectedCategory = ko.observable(data.category);
 
 // google map marker
           // Create a marker per location, and put into markers array.
@@ -158,6 +158,14 @@ var Location = function(data) {
 
 }; // end Location class
 
+// create Category class
+//**********************
+//		Category
+//**********************
+var Category = function(data){
+this.name= ko.observable(data.name);
+this.visiable = ko.observable(true);
+};
 
 // the viewModel
 //**********************
