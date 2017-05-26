@@ -75,28 +75,29 @@ var Locations = [{
 //		Map
 //**********************
 
-var map;
-// Create a new blank array for all the listing markers.
-var markers = [];
-
 
 // Constructor creates a new map - only center and zoom are required.
 
- function initMap() {
-        // Create a styles array to use with the map.
+var googleMap = {
+    map: {},
+
+    options: {
+        center: {
+            lat: 24.697285134978586,
+            lng: 46.685779094696045
+        },
+        zoom: 16
+    },
+    infoWindowContent: '<div> </div>',
+    initMap: function(viewM) {
+        googleMap.map = new google.maps.Map(document.getElementById('map'), googleMap.options);
+    }
+}; // end googleMap 
+
+
+
+/*
      
-
-        // Constructor creates a new map - only center and zoom are required.
-        map = new google.maps.Map(document.getElementById('map'), {
-          center: {lat: 24.697285134978586, lng: 46.685779094696045},
-          zoom: 16,
-          mapTypeControl: false
-        });
-
-  
-
-        var largeInfowindow = new google.maps.InfoWindow();
-
         
         // The following group uses the location array to create an array of markers on initialize.
         for (var i = 0; i < Locations.length; i++) {
@@ -127,8 +128,8 @@ var markers = [];
           });
         }
        
+*/
 
-      }
 // create Location class
 //**********************
 //		Location
@@ -138,7 +139,24 @@ var Location = function(data) {
     this.LatLng = ko.observable(data.LatLng);
     this.category = ko.observable(data.category);
 
-};
+// google map marker
+          // Create a marker per location, and put into markers array.
+           var marker = new google.maps.Marker({
+            position: new google.maps.LatLng(data.lat, data.lng),
+            title: data.name,
+            animation: google.maps.Animation.DROP,
+          });
+
+           	// click handler for google maps marker
+	google.maps.event.addListener(marker, 'click', (function(Location, parent) {
+		return function() {
+			// tell viewmodel to show this place
+			parent.showPlace(Location);
+		};
+	}) (this, parent));
+	this.marker = marker;
+
+}; // end Location class
 
 
 // the viewModel
@@ -151,15 +169,32 @@ var ViewModel = function() {
 
 }; //end view
 
-
 // *******************************
 // *            SETUP            *
 // *******************************
 
 // empty view model
-var vm = new ViewModel();
+var viewM = new ViewModel();
 
+/*
 // listener for view model initialization
+$(document).ready(function() {
+    viewM.initMap();
+    ko.applyBindings(viewM);
+
+    // resize map and reset center when window size changes
+    $(window).on('resize', function() {
+        google.maps.event.trigger(googleMap.map, 'resize');
+        googleMap.map.setCenter(googleMap.options.center);
+    });
+});*/
 
 // listener for google map initialization
-google.maps.event.addDomListener(window, 'load', initMap());
+google.maps.event.addDomListener(window, 'load', googleMap.initMap(viewM));
+// *******************************
+// *      ERROR Handling         *
+// *******************************
+
+function ErrorHandling(){
+	alert("Google Maps has failed to load. Please check your internet connection and try again.");
+}
