@@ -8,7 +8,7 @@ This project is part of :
 
 ### How To Run
 
-1. Click here to try it out: ➡ [online](https://iabrar.github.io/neighborhood-map/)
+1. Click here to try it out:[online](https://iabrar.github.io/neighborhood-map/)
 2. Click on any of the places on the map / sidebar for more information
 
 
