@@ -162,4 +162,4 @@ var vm = new ViewModel();
 // listener for view model initialization
 
 // listener for google map initialization
-//google.maps.event.addDomListener(window, 'load', initMap());
+google.maps.event.addDomListener(window, 'load', initMap());
