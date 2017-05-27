@@ -89,7 +89,7 @@ var googleMap = {
         zoom: 16
     },
     infoWindowContent: '<div> </div>',
-    initMap: function(viewM) {
+    initApp: function(viewM) {
         googleMap.map = new google.maps.Map(document.getElementById('map'), googleMap.options);
     }
 }; // end googleMap 
@@ -137,7 +137,7 @@ var googleMap = {
 var Location = function(data) {
     this.name = ko.observable(data.name);
     this.LatLng = ko.observable(data.LatLng);
-    this.selectedCategory = ko.observable(data.category);
+    this.category = ko.observable(data.category);
 
 // google map marker
           // Create a marker per location, and put into markers array.
@@ -150,7 +150,7 @@ var Location = function(data) {
            	// click handler for google maps marker
 	google.maps.event.addListener(marker, 'click', (function(Location, parent) {
 		return function() {
-			// tell viewmodel to show this place
+			// tell viewmodel to show this location
 			parent.showPlace(Location);
 		};
 	}) (this, parent));
@@ -174,6 +174,118 @@ this.visiable = ko.observable(true);
 var ViewModel = function() {
     var self = this;
 
+// *******************************
+// *    INITINALIZATION          *
+// *******************************
+	self.initApp = function() {
+		var categoryArray = [];
+		var selectedCatArray = [];
+
+		// create container for location
+		self.locationList = ko.observableArray([]);
+
+		// loop through locations array and convert to ko object
+		Locations.forEach(function(location) {
+			self.locationList.push(new Location(location, self));
+
+			// loop through category for each location and add to self.selected
+			location.category(function(data){
+				// if current tag is not already a filter, add to self.filters
+				if (categoryArray.indexOf(data) < 0) {
+					categoryArray.push(category);
+				}
+			});// end tag loop
+		});// end location loop
+
+		// loop through tags and make filter objects from them
+		categoryArray.forEach(function(category){
+			selectedCatArray.push(new Filter({name: category}));
+		});
+
+		// set selected based on temporary array
+		// this has performance benefits over pushing items one at a time
+		self.filters = ko.observableArray(selectedCatArray);
+
+		// array of filters currently applied
+		self.currentFilters = ko.computed(function() {
+			var tempCurrentFilters = [];
+
+			// loop through filters and get all filters that are on
+			ko.utils.arrayForEach(self.filters(), function(filter){
+				if (filter.visiable()) tempCurrentFilters.push(filter.name());
+			});
+
+			return tempCurrentFilters;
+		});
+
+		// array of locations to be shown based on currentFilters
+		 self.filteredLocations = ko.computed(function() {
+			var tempLoca = ko.observableArray([]);
+			var returnLocations = ko.observableArray([]);
+
+			// apply filter
+			ko.utils.arrayForEach(self.locationList(), function(location){
+				var locationCat = location.category();
+
+				// loop through all tags for a place and
+				// determine if any are also a currently applied filter
+				var intersections = placeTags.filter(function(tag){
+					return self.currentFilters().indexOf(tag) != -1;
+				});
+
+				// if one or more tags for a place are in a filter, add it
+				if (intersections.length > 0) tempLocations.push(location);
+			});
+
+			var tempSearchFilter = self.searchFilter().toLowerCase();
+
+			// if there is no additional text to search for, return filtered locations
+			if (!tempSearchFilter){
+				returnLocations = tempLoca();
+			}
+			// if user is also searching via text box, apply text filter
+			else{
+				returnLocations = ko.utils.arrayFilter(tempLoca(), function(locatio) {
+		        	return location.name().toLowerCase().indexOf(tempSearchFilter) !== -1;
+		        });
+			}
+
+			// hide/show correct markers based on list of current locations
+			self.filterMarkers(returnLocations);
+			return returnLocations;
+
+		});
+
+		// if no markers have been shown, show them
+		if (!self.hasMarkers) self.showMarkers();
+		self.initialized = true;
+	};
+
+
+// *******************************
+// *          Methods            *
+// *******************************
+
+	self.filterMarkers = function(filteredLocations) {
+		ko.utils.arrayForEach(self.locationList(), function(location){
+			if (filteredLocations.indexOf(location) === -1) {
+				location.marker.setVisible(false);
+			}
+			else{
+				location.marker.setVisible(true);
+			}
+		});
+	};
+
+	// show marker for each place
+	self.showMarkers = function() {
+		ko.utils.arrayForEach(self.locationList(), function(location){
+			location.marker.setMap(googleMap.map);
+		});
+
+		self.hasMarkers = true;
+	};
+
 
 }; //end view
 
@@ -184,10 +296,10 @@ var ViewModel = function() {
 // empty view model
 var viewM = new ViewModel();
 
-/*
+
 // listener for view model initialization
 $(document).ready(function() {
-    viewM.initMap();
+    viewM.initApp();
     ko.applyBindings(viewM);
 
     // resize map and reset center when window size changes
@@ -195,10 +307,10 @@ $(document).ready(function() {
         google.maps.event.trigger(googleMap.map, 'resize');
         googleMap.map.setCenter(googleMap.options.center);
     });
-});*/
+});
 
 // listener for google map initialization
-google.maps.event.addDomListener(window, 'load', googleMap.initMap(viewM));
+google.maps.event.addDomListener(window, 'load', googleMap.initApp(viewM));
 // *******************************
 // *      ERROR Handling         *
 // *******************************

@@ -37,14 +37,13 @@
                                     <h2>Search Your Location</h2>
 
                                     <div class="form-group">
-                                        <select class="form-control" >
-                                            <!--  <option selected="selected" value="">Select Category</option> -->
+                                        <select class="form-control" data-bind="options: filters" >
 
                                         </select>
                                     </div>
                                     <div class="form-group">
-                                        <ul  id="Location-list">
-                                            <li ></li>
+                                        <ul  id="Location-list" data-bind="foreach: filteredPlaces">
+                                            <li  data-bind="click: $parent.showPlace.bind($data), text: $data.name" ></li>
                                         </ul>
 
                                      </div>   <!-- /.form-group -->
@@ -64,7 +63,7 @@
              </div>  <!-- end row -->
         </div> <!-- end continar fluid -->
         <!-- google map scripts -->
-        <script async defer src="https://maps.google.com/maps/api/js?key=AIzaSyDeo8nMTAv99IdgYkdR-s4gRcTDPCI3Zlw&v=3" onerror="ErrorHandling()"></script>
+        <script async defer src="https://maps.google.com/maps/api/js?sensor=false&key=AIzaSyDeo8nMTAv99IdgYkdR-s4gRcTDPCI3Zlw&v=3" onerror="ErrorHandling()"></script>
         <script type="text/javascript" src="js/lib/knockout-3.4.2.js"></script>
         <script type="text/javascript" src="https://code.jquery.com/jquery-2.0.3.min.js"></script>
 
